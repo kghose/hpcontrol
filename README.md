@@ -82,7 +82,7 @@ community has detailed instructions on how to use a [WeMos D1 mini board
 
 (Also see [this thread][findcn105])
 
-[findcn1105]: https://www.geekzone.co.nz/forums.asp?forumid=73&topicid=303958
+[findcn105]: https://www.geekzone.co.nz/forums.asp?forumid=73&topicid=303958
 
 
 I decided against this method:
