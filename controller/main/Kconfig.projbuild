@@ -1,0 +1,51 @@
+menu "Heat Pump Controller"
+
+    config DEVICE_IS_SERVER
+        bool "Device is server"
+        default 0
+        help
+            Device to be flashed will act as the server node.
+
+    config STA_WIFI_SSID
+        string "STA SSID"
+        help
+            SSID (network name) for network (WiFi router).
+
+    config STA_WIFI_PASSWORD
+        string "STA Password"
+        help
+            WiFi password (WPA or WPA2) for network (WiFi router).
+
+
+    config AP_WIFI_SSID
+        string "AP SSID"
+        default "grue"
+        help
+            SSID (network name) server will provide.
+
+    config AP_WIFI_PASSWORD
+        string "AP Password"
+        help
+            WiFi password (WPA or WPA2) for network server will provide.
+
+    config AP_WIFI_CHANNEL
+        int "WiFi Channel"
+        range 1 13
+        default 1
+        help
+            WiFi channel (network channel) for network server will provide.
+    
+    config AP_MAX_CONNECTION
+        int "AP Max connections"
+        default 3
+        help
+            Maximum number of AP connections to server device 
+
+    config WIFI_MAXIMUM_RETRY
+        int "Maximum retry"
+        default 5
+        help
+            Set the Maximum retry to prevent the ESP from continually trying to connect to a nonexistent WiFI AP.
+
+endmenu
+
