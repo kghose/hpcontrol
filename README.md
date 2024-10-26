@@ -134,6 +134,35 @@ Add current user to `dialout`
 sudo usermod -a -G dialout $USER
 ```
 
+# Setup for ESP8266
+
+The modern ESP tooling, [ESP-IDF](https://idf.espressif.com/), which works for
+ESP32 [does not support](https://idf.espressif.com/) the ESP8266. We have to use
+the [ESP8266_RTOS_SDK](https://github.com/espressif/ESP8266_RTOS_SDK) instead.
+This toolchain only works with Python2 which has been deprecated on Ubuntu 24
+(and other Linux distributions, I think)
+
+## Installing Python 2 on Ubuntu 24
+
+If we only wanted to install Python 2 it would be easy, but the problem is that
+we need to install Python 2 with SSL support because `pip` needs this and we
+need `pip`.
+
+After many dead ends I found [these instructions on James Betker's
+blog](https://medium.com/@jbetker/how-to-build-python-2-7-with-ssl-b9e4aa26f061)
+which applies a custom openssl patch that fell of a lorry somewhere. (I'm not
+kidding, I wouldn't be surprised if this patch was a Chinese intelligence
+operation to install backdoors in computers).
+
+In any case this got me a Python2 install with SSL, and I added a softlink to
+this Python in a special directory that I only add to the path when I use the
+ESP tool chain.
+
+## Installing the ESP8266 RTOS SDK
+
+Follow the instructions
+[here](https://docs.espressif.com/projects/esp8266-rtos-sdk/en/latest/get-started/index.html)
+
 
 # Build and flash
 
