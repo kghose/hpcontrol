@@ -2,31 +2,30 @@ menu "Heat Pump Controller"
 
     config DEVICE_IS_SERVER
         bool "Device is server"
-        default 0
+        default false 
         help
             Device to be flashed will act as the server node.
 
     config STA_WIFI_SSID
-        string "STA SSID"
+        string "Home WiFi SSID"
         help
-            SSID (network name) for network (WiFi router).
+            SSID (network name) for WiFi router.
 
     config STA_WIFI_PASSWORD
-        string "STA Password"
+        string "Home WiFi Password"
         help
-            WiFi password (WPA or WPA2) for network (WiFi router).
-
+            Password for network WiFi router.
 
     config AP_WIFI_SSID
-        string "AP SSID"
+        string "Controller SSID"
         default "grue"
         help
-            SSID (network name) server will provide.
+            SSID of heat pump controller.
 
     config AP_WIFI_PASSWORD
-        string "AP Password"
+        string "Controller password"
         help
-            WiFi password (WPA or WPA2) for network server will provide.
+            Password for heat pump controller.
 
     config AP_WIFI_CHANNEL
         int "WiFi Channel"

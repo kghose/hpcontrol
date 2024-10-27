@@ -63,6 +63,37 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
   }
 }
 
+void configure_to_connect_to_router() {
+  wifi_config_t wifi_sta_config = {
+      .sta = {.threshold.authmode = WIFI_AUTH_WPA2_PSK,
+              .ssid = CONFIG_STA_WIFI_SSID,
+              .password = CONFIG_STA_WIFI_PASSWORD},
+  };
+  ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_sta_config));
+}
+
+void configure_to_connect_to_access_point() {
+  wifi_config_t wifi_sta_config = {
+      .sta = {.threshold.authmode = WIFI_AUTH_WPA2_PSK,
+              .ssid = CONFIG_AP_WIFI_SSID,
+              .password = CONFIG_AP_WIFI_PASSWORD},
+  };
+  ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_sta_config));
+}
+
+void configure_to_provide_access_point() {
+  wifi_config_t wifi_ap_config = {
+      .ap = {
+          .ssid = CONFIG_AP_WIFI_SSID,
+          .ssid_len = strlen(CONFIG_AP_WIFI_SSID),
+          .password = CONFIG_AP_WIFI_PASSWORD,
+          .max_connection = CONFIG_AP_MAX_CONNECTION,
+          .authmode = WIFI_AUTH_WPA2_PSK,
+      }};
+  ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_ap_config));
+  ESP_LOGI(TAG, "AP SSID:%s", CONFIG_AP_WIFI_SSID);
+}
+
 void wifi_init(void) {
   s_wifi_event_group = xEventGroupCreate();
 
@@ -78,30 +109,21 @@ void wifi_init(void) {
   ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP,
                                              &wifi_event_handler, NULL));
 
-  ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+  ESP_ERROR_CHECK(esp_wifi_set_mode(CONFIG_DEVICE_IS_SERVER ? WIFI_MODE_APSTA
+                                                            : WIFI_MODE_STA));
 
-  wifi_config_t wifi_sta_config = {
-      .sta = {.threshold.authmode = WIFI_AUTH_WPA2_PSK,
-              .ssid = CONFIG_STA_WIFI_SSID,
-              .password = CONFIG_STA_WIFI_PASSWORD},
-  };
-  ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_sta_config));
-
-  wifi_config_t wifi_ap_config = {.ap = {
-                     .ssid = CONFIG_AP_WIFI_SSID,
-                     .ssid_len = strlen(CONFIG_AP_WIFI_SSID),
-                     .password = CONFIG_AP_WIFI_PASSWORD,
-                     .max_connection = CONFIG_AP_MAX_CONNECTION,
-                     .authmode = WIFI_AUTH_WPA2_PSK,
-                 }};
-  ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_ap_config));
+  if (CONFIG_DEVICE_IS_SERVER) {
+    configure_to_connect_to_router();
+    configure_to_provide_access_point();
+  } else {
+    configure_to_connect_to_access_point();
+  }
 
   ESP_ERROR_CHECK(esp_wifi_start());
-  ESP_LOGI(TAG, "WiFi AP init finished. SSID:%s", CONFIG_AP_WIFI_SSID);
 
-  /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or
-   * connection failed for the maximum number of re-tries (WIFI_FAIL_BIT). The
-   * bits are set by event_handler() (see above) */
+  /* Waiting until either the connection is established (WIFI_CONNECTED_BIT)
+   * or connection failed for the maximum number of re-tries (WIFI_FAIL_BIT).
+   * The bits are set by event_handler() (see above) */
   EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
                                          WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
                                          pdFALSE, pdFALSE, portMAX_DELAY);
