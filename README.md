@@ -89,8 +89,8 @@ I decided against this method:
 
 1. It involves opening up each head and attaching a home-made device. If ever a 
    company had an excuse not to honor a warranty, it is this.
-1. There is a real possibility that a malfunction on the board could damage the 
-   head circuitry.
+1. There is a real possibility that a malfunction on my home-made board could 
+   damage the head circuitry. (e.g. [see this post][cuttlefish])
 1. It might confuse a tech coming to service or fix the head.
 1. It will likely confuse the rest of my family: they'll be trying to set the 
    mini-split with the remote and Dad's secret circuit keeps changing things 
@@ -104,6 +104,9 @@ it is non-invasive and far less obscure.
 
 It's much easier to explain to my family that this box on the wall is an 
 automatic remote and if you ever think it's wonky, just unplug it.
+
+[cuttlefish]: https://cuttlefishblacknet.wordpress.com/2019/05/31/mitsubishi-heatpump-2/
+
 
 # Check ESP32 connection via USB
 
