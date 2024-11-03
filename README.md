@@ -2,6 +2,14 @@
 
 Control Mitsubishi heat pump system via a web based interface.
 
+```
+arduino-cli compile \
+--library hpcontrol/src/ \
+--fqbn esp8266:esp8266:nodemcuv2 \
+--build-path hpcontrol/build \
+hpcontrol
+```
+
 # Architecture
 
 ```
