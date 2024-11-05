@@ -5,26 +5,40 @@
  * app.
  */
 #include "webserver.h"
+#include "log.h"
 
 static ESP8266WebServer *http_server;
 
 const char root_page[] = R"WEBPAGE(
-<form action="/head" method="POST">
+<a href="/show_log">Log</a>
+</hr>
+<form action="/program_head" method="POST">
 <input type="submit" value="SET">
-</form>)WEBPAGE";
+</form>
+)WEBPAGE";
 
-void handle_root() { http_server->send(200, "text/html", root_page); }
+void display_settings() {
+  http_server->send(200, "text/html",
+                    (digitalRead(LED_BUILTIN) ? String("ON") : String("OFF")) +
+                        String(root_page));
+}
 
-void handle_head() {
+void program_head() {
+  log_info("Program head");
   // Just flip the LED for now ...
   digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
   http_server->sendHeader("Location", "/");
   http_server->send(303);
 }
 
+void show_log() {
+  http_server->send(200, "text/html", "<h1>Log</h1>" + get_log());
+}
+
 void setup_webpage_handlers(ESP8266WebServer *http_server_) {
   http_server = http_server_;
 
-  http_server->on("/", HTTP_GET, handle_root);
-  http_server->on("/head", HTTP_POST, handle_head);
+  http_server->on("/", HTTP_GET, display_settings);
+  http_server->on("/program_head", HTTP_POST, program_head);
+  http_server->on("/show_log", HTTP_GET, show_log);
 }
