@@ -17,7 +17,7 @@ void log_msg(String msg) {
   if (!log_file) {
     return; // Don't crash the application
   }
-  log_file.println(String(time(nullptr)) + ": " + msg + "\n");
+  log_file.println(String(time(nullptr)) + ": " + msg);
   if (log_file.position() > MAX_SIZE_BYTES) {
     log_file.seek(0, SeekSet);
   }
