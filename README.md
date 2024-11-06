@@ -10,6 +10,12 @@ arduino-cli compile \
 hpcontrol
 ```
 
+# OTA via AP
+AP name is something like "ESP-XXX"
+
+`http://192.168.4.1/update`
+
+
 # Design 
 ## Negotiation
 
