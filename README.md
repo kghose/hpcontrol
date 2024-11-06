@@ -10,6 +10,59 @@ arduino-cli compile \
 hpcontrol
 ```
 
+# Design 
+## Negotiation
+
+I would like to have a resilient system, where, if one node goes down, the rest 
+of the units still work. I'd like to be able to command each unit separately, 
+but also command all the units together. I might even want to set schedules.
+
+It looks like we want a system where each node can build a list of what other 
+mini-split control nodes exist on the network and synchronize state with them 
+whenever some kind of change occurs. 
+
+Each node is responsible for sending commands to its own head.
+
+When a unit is turned on
+
+1. It loads the SSID and password from non-volatile storage and attempts to 
+   connect to the router.
+1. If the router is down, it keeps periodically retrying.
+1. If the SSID/password pair doesn't work, or it can't find the SSID/password 
+   pair, it goes into AP mode so we can connect to it directly.  
+   1. It creates an AP name with a random suffix to minimize clashes if multiple 
+      nodes are in the same situation.
+1. Once connected to the router it uses mDNS to announce itself and periodically 
+   check for all devices that advertise themselves as `mini-split-controller`.
+
+## Synchronization
+
+1. Settings are time stamped.  
+1. When a unit first connects to the network it asks all its peers for their 
+   settings. It updates itself to the latest settings if needed.
+1. If we use the web interface to change something (including schedule) the 
+   serving node
+  1. Refreshes the mDNS list
+  1. Contacts each node in turn and updates the settings on all of them.
+1. If a peer node changes something in the settings of a node, the node commands 
+   the mini-split head, but doesn't propagate the changed settings (which would 
+result in an endless loop) 
+
+
+## Upgrade path to CN105 solution
+
+This solution has a simple upgrade path to a wired (CN105) solution. 
+
+1. We replace the IR library with a library to talk to the mini-split head via 
+   the CN105
+1. We transfer the code to a WeMOS D1 mini-board
+
+We therefore have an abstraction layer above the IR library code where the 
+settings are in a driver independent format (fancy way of saying we have a 
+settings object and the IR driver reads the settings object)
+
+
+
 # Architecture
 
 ```
